@@ -1,0 +1,153 @@
+{
+  "type": "APL",
+  "version": "2023.1",
+  "graphics": {
+    "Slider": {
+      "type": "AVG",
+      "version": "1.1",
+      "parameters": [
+        "positionofbutton",
+        "SliderButton"
+      ],
+      "resources": [
+        {
+          "gradients": {
+            "fillcolor": {
+              "inputRange": [
+                0,
+                1
+              ],
+              "colorRange": [
+                "#E0FFDE",
+                "#FCC4C9"
+              ],
+              "type": "linear",
+              "x1": 0,
+              "y1": 0,
+              "x2": 1,
+              "y2": 0
+            }
+          }
+        }
+      ],
+      "width": 100,
+      "height": 100,
+      "scaleTypeWidth": "stretch",
+      "items": [
+        {
+          "type": "path",
+          "description": "Slider Background",
+          "pathData": "M45,55 a10,10,0,0,1,0,-20 l${width-90},0 a10,10,0,0,1,0,20 Z",
+          "fill": "@fillcolor"
+        },
+        {
+          "type": "group",
+          "description": "Button",
+          "translateX": "${positionofbutton * (width - 90)}",
+          "opacity": "${SliderButton ? 1 : 0}",
+          "items": {
+            "type": "path",
+            "pathData": "M45,60 a10,10,0,0,1,0,-30 l${positionofbutton},0 a10,10,0,0,1,0,30 Z",
+            "fill": "#0C0C0C",
+            "stroke": "rgb(16,48,41)"
+          }
+        }
+      ]
+    }
+  },
+  "settings": {},
+  "import": [
+    {
+      "name": "alexa-layouts",
+      "version": "1.6.0"
+    },
+    {
+      "name": "alexa-icon",
+      "version": "1.0.0"
+    }
+  ],
+  "resources": [],
+  "styles": {},
+  "onMount": [],
+  "commands": {},
+  "layouts": {},
+  "mainTemplate": {
+    "parameters": [
+      "payload"
+    ],
+    "items": [
+      {
+        "type": "Container",
+        "width": "100%",
+        "height": "100%",
+        "alignItems": "center",
+        "bind": [
+          {
+            "name": "Position",
+            "value": 0
+          },
+          {
+            "name": "SliderButton",
+            "value": true
+          }
+        ],
+        "items": [
+          {
+            "type": "Frame",
+            "alignSelf": "center",
+            "width": "100%",
+            "height": "100%",
+            "backgroundColor": "#F4FAFB",
+            "item": {
+              "type": "Container",
+              "width": "100%",
+              "height": "100%",
+              "alignItems": "center",
+              "direction": "row",
+              "item": [
+                {
+                  "type": "VectorGraphic",
+                  "id": "vectorGraphicId",
+                  "source": "Slider",
+                  "scale": "fill",
+                  "width": "100%",
+                  "positionofbutton": "${Position}",
+                  "SliderButton": "${SliderButton}",
+                  "onDown": [
+                    {
+                      "type": "SetValue",
+                      "property": "SliderButton",
+                      "value": true
+                    }
+                  ],
+                  "onUp": [
+                    {
+                      "type": "SetValue",
+                      "property": "SliderButton",
+                      "value": true
+                    },
+                    {
+                      "type": "SendEvent",
+                      "arguments": [
+                        "selected_val",
+                        "${Position}"
+                      ],
+                      "sequencer": "MySequencer"
+                    }
+                  ],
+                  "onMove": [
+                    {
+                      "type": "SetValue",
+                      "property": "Position",
+                      "value": "${Math.clamp(0, (event.viewport.x - 45) / (event.viewport.width - 100), 1)}"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
